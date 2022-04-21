@@ -17,7 +17,7 @@ Stop Loss: The algorithm knows no stop loss as long as it is not activated from 
 Trades: Trades are opened only if the price is within the grid. If the market leaves the grid the algorithm will not buy new positions or sell new positions.
 Optimal market conditions: The favorable market for this algorithm is the sideways market.
 
-MODEL's LIMITATION
+MODEL'S LIMITATION
 The trader must take into account that this is a static model. It only works perfectly well if the market is in a sideways trend and incurs heavy losses if the market takes a bearish trend. The model is unusable for an bull trend. The trader must therefore carefully analyze the market where he intends to use this strategy, making sure that the price is in a sideways trend.
 
 USES
