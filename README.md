@@ -15,7 +15,7 @@ Grid trading is a trading strategy where an investor creates a so-called "price 
 1) Grids: This algorithm has a total of 10 grids.
 2) Take profit: The trader can increase or decrease the distance between the grids from the User Interface panel, the distance between one grid and another represents the take profit.
 3) Management: The algorithm buys 10% of the capital every time the price breaks down a grid and sells during a rise to the next higher grid. The initial capital is invested in 10 sizes which represent 10% of the capital per trade.
-4) Stop Loss: The algorithm knows no stop loss as long as it is not activated from the User Interface panel. By activating the stop loss from the User 5) 5) Interface panel the algorithm will insert a close condition on all trades which will be calculated from the last lower grid.
+4) Stop Loss: The algorithm knows no stop loss as long as it is not activated from the User Interface panel. By activating the stop loss from the User Interface panel the algorithm will insert a close condition on all trades which will be calculated from the last lower grid.
 6) Trades: Trades are opened only if the price is within the grid. If the market leaves the grid the algorithm will not buy new positions or sell new positions.
 7) Optimal market conditions: The favorable market for this algorithm is the sideways market.
 
