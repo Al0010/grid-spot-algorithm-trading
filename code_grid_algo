@@ -1,0 +1,358 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+
+//@version=5
+strategy(title='Grid Spot Trading Algorithm', overlay=true,
+     initial_capital=1000, commission_type = strategy.commission.percent, commission_value = 0.03, pyramiding = 10, 
+     default_qty_value=10, default_qty_type=strategy.percent_of_equity,
+     process_orders_on_close=true, close_entries_rule='ANY')
+
+/////////////////////////////// STARTING ALGORITHM BACKTEST ////////////////////////////////////
+
+//--------------------------------------- Set Date Range Backtesting --------------------------------------{
+
+// Make input options that configure backtest date range
+startDate = input.int(title="Start Date",
+     defval=1, minval=1, maxval=31, group = 'DATE RANGE: Select the date range for backtesting')
+startMonth = input.int(title="Start Month",
+     defval=1, minval=1, maxval=12, group = 'DATE RANGE: Select the date range for backtesting')
+startYear = input.int(title="Start Year",
+     defval=2018, minval=1800, maxval=2100, group = 'DATE RANGE: Select the date range for backtesting')
+
+endDate = input.int(title="End Date",
+     defval=30, minval=1, maxval=31, group = 'DATE RANGE: Select the date range for backtesting')
+endMonth = input.int(title="End Month",
+     defval=3, minval=1, maxval=12, group = 'DATE RANGE: Select the date range for backtesting')
+endYear = input.int(title="End Year",
+     defval=2022, minval=1800, maxval=2100, group = 'DATE RANGE: Select the date range for backtesting')
+
+// Look if the close time of the current bar
+// Falls inside the date range
+inDateRange = (time >= timestamp(syminfo.timezone, startYear,
+         startMonth, startDate, 0, 0)) and
+     (time < timestamp(syminfo.timezone, endYear, endMonth, endDate, 0, 0))
+
+//--------------------------------------------------------------------------------}
+
+
+//---------------------------------------Grid Setting--------------------------------------{
+
+PercentProfit = input(0.50, "Percent", group = "Grid Multiple Percent")
+
+x1 = (100 - (PercentProfit * 1)) / 100
+x2 = (100 - (PercentProfit * 2)) / 100
+x3 = (100 - (PercentProfit * 3)) / 100
+x4 = (100 - (PercentProfit * 4)) / 100
+
+x5 = (100 - (PercentProfit * 5)) / 100
+
+x6 = (100 - (PercentProfit * 6)) / 100
+x7 = (100 - (PercentProfit * 7)) / 100
+x8 = (100 - (PercentProfit * 8)) / 100
+x9 = (100 - (PercentProfit * 9)) / 100
+
+x10 = (100 - (PercentProfit * 10)) / 100
+
+UpperLimit = input.price(0.00, 'Top Grid Position', group = "", confirm=true)
+plot(UpperLimit, color = color.purple)
+
+LowerLimit = UpperLimit * x10
+plot(LowerLimit, color = color.purple)
+
+//--------------------------------------------------------------------------------}
+
+//--------------------------------------- Lines Setting --------------------------------------{
+
+Linea_A = UpperLimit * x1
+plot(Linea_A, color =  color.blue)
+
+Linea_B = UpperLimit * x2
+plot(Linea_B, color =  color.blue)
+
+Linea_C = UpperLimit * x3
+plot(Linea_C, color =  color.blue)
+
+Linea_D = UpperLimit * x4
+plot(Linea_D, color =  color.blue)
+
+Linea_50Percent = UpperLimit * x5
+plot(Linea_50Percent, color =  color.purple)
+
+Linea_E = UpperLimit *  x6
+plot(Linea_E, color =  color.blue)
+
+Linea_F = UpperLimit * x7
+plot(Linea_F, color =  color.blue)
+
+Linea_G = UpperLimit  * x8
+plot(Linea_G, color =  color.blue)
+
+Linea_H = UpperLimit * x9
+plot(Linea_H, color =  color.blue)
+
+//--------------------------------------------------------------------------------}
+
+//--------------------------------------- Trades Order Setting --------------------------------------{
+
+FloorLimit = close > LowerLimit 
+Cond1 = close < Linea_A
+Cd1 = FloorLimit and Cond1
+LongA = Cd1 and inDateRange
+
+isLong1 = if (LongA and barstate.isconfirmed)
+    1
+else 
+    0 
+
+FloorLimit2 = close > LowerLimit 
+Cond2 = close < Linea_B
+Cd2 = FloorLimit2 and Cond2
+LongB = Cd2 and inDateRange
+
+isLong2 = if (LongB and barstate.isconfirmed)
+    1
+else 
+    0
+
+FloorLimit3 = close > LowerLimit 
+Cond3 = close < Linea_C
+Cd3 = FloorLimit and Cond3
+LongC = Cd3 and inDateRange 
+
+isLong3 = if (LongC and barstate.isconfirmed)
+    1
+else 
+    0
+
+FloorLimit4 = close > LowerLimit 
+Cond4 = close < Linea_D
+Cd4 = FloorLimit and Cond4
+LongD = Cd4 and inDateRange 
+
+isLong4 = if (LongD and barstate.isconfirmed)
+    1
+else 
+    0 
+    
+FloorLimit5 = close > LowerLimit 
+Cond5 = close < Linea_50Percent
+Cd5 = FloorLimit and Cond5
+Long_E = Cd5 and inDateRange 
+
+isLong5 = if (Long_E and barstate.isconfirmed)
+    1
+else 
+    0 
+    
+FloorLimit6 = close > LowerLimit 
+Cond6 = close < Linea_E
+Cd6 = FloorLimit and Cond6
+Long_F = Cd6 and inDateRange 
+
+isLong6 = if (Long_F and barstate.isconfirmed)
+    1
+else 
+    0 
+    
+FloorLimit7 = close > LowerLimit 
+Cond7 = close < Linea_F
+Cd7 = FloorLimit and Cond7
+Long_G = Cd7 and inDateRange 
+
+isLong7 = if (Long_G and barstate.isconfirmed)
+    1
+else 
+    0 
+    
+FloorLimit8 = close > LowerLimit 
+Cond8 = close < Linea_G
+Cd8 = FloorLimit and Cond8
+Long_H = Cd8 and inDateRange 
+
+isLong8 = if (Long_H and barstate.isconfirmed)
+    1
+else 
+    0 
+    
+FloorLimit9 = close > LowerLimit 
+Cond9 = close < Linea_H
+Cd9 = FloorLimit and Cond9
+LongH = Cd9 and inDateRange 
+
+isLong9 = if (Long_H and barstate.isconfirmed)
+    1
+else 
+    0 
+
+Cond10 = close < LowerLimit
+Long_I = Cond10 and inDateRange 
+
+isLong10 = if (Long_I and barstate.isconfirmed)
+    1
+else 
+    0 
+
+
+
+//--------------------------------------------------------------------------------}
+
+//--------------------------------------- Exit Trades Order Setting --------------------------------------{
+
+isExit1 = if (close > UpperLimit and barstate.isconfirmed)
+    close
+    
+isExit2 = if (close > Linea_A and barstate.isconfirmed)
+    close
+    
+isExit3 = if (close > Linea_B and barstate.isconfirmed)
+    close
+
+isExit4 = if (close > Linea_C and barstate.isconfirmed)
+    close
+    
+isExit5 = if (close > Linea_D and barstate.isconfirmed)
+    close
+    
+isExit6 = if (close > Linea_50Percent and barstate.isconfirmed)
+    close
+    
+isExit7 = if (close > Linea_E and barstate.isconfirmed)
+    close
+
+isExit8 = if (close > Linea_F and barstate.isconfirmed)
+    close
+    
+isExit9 = if (close > Linea_G and barstate.isconfirmed)
+    close
+
+isExit10 = if (close > Linea_H and barstate.isconfirmed)
+    close
+    
+//--------------------------------------------------------------------------------}
+    
+//---------------------------------------Order Management Setting--------------------------------------{
+
+strategy.entry(id = "BUY1",  direction = strategy.long, qty = 10, when = (isLong1 and strategy.position_size == 0))
+strategy.entry(id = "BUY2",  direction = strategy.long, qty = 10, when = (isLong2 and strategy.position_size == 10))
+strategy.entry(id = "BUY3",  direction = strategy.long, qty = 10, when = (isLong3 and strategy.position_size == 20))
+strategy.entry(id = "BUY4",  direction = strategy.long, qty = 10, when = (isLong4 and strategy.position_size == 30))
+strategy.entry(id = "BUY5",  direction = strategy.long, qty = 10, when = (isLong5 and strategy.position_size == 40))
+strategy.entry(id = "BUY6",  direction = strategy.long, qty = 10, when = (isLong6 and strategy.position_size == 50))
+strategy.entry(id = "BUY7",  direction = strategy.long, qty = 10, when = (isLong7 and strategy.position_size == 60))
+strategy.entry(id = "BUY8",  direction = strategy.long, qty = 10, when = (isLong8 and strategy.position_size == 70))
+strategy.entry(id = "BUY9",  direction = strategy.long, qty = 10, when = (isLong9 and strategy.position_size == 80))
+strategy.entry(id = "BUY10", direction = strategy.long, qty = 10, when = (isLong10 and strategy.position_size == 90))
+
+
+strategy.exit(id = "EXIT1",     from_entry = "BUY1",    qty = 100, stop = isExit1)
+strategy.exit(id = "EXIT2",     from_entry = "BUY2",    qty = 100, stop = isExit2)
+strategy.exit(id = "EXIT3",     from_entry = "BUY3",    qty = 100, stop = isExit3)
+strategy.exit(id = "EXIT4",     from_entry = "BUY4",    qty = 100, stop = isExit4)
+strategy.exit(id = "EXIT5",     from_entry = "BUY5",    qty = 100, stop = isExit5)
+strategy.exit(id = "EXIT6",     from_entry = "BUY6",    qty = 100, stop = isExit6)
+strategy.exit(id = "EXIT7",     from_entry = "BUY7",    qty = 100, stop = isExit7)
+strategy.exit(id = "EXIT8",     from_entry = "BUY8",    qty = 100, stop = isExit8)
+strategy.exit(id = "EXIT9",     from_entry = "BUY9",    qty = 100, stop = isExit9)
+strategy.exit(id = "EXIT10",    from_entry = "BUY10",   qty = 100, stop = isExit10)
+
+//--------------------------------------------------------------------------------}
+
+//--------------------------------------- Extreme Condition Setting --------------------------------------{
+
+ExitConditionOn = input.string("NO", title="ConditionExit", 
+     options=["NO", "YES"], group = "Setting Stop Loss Level") == "YES"
+
+StopLoss = input(0.00, "StopLoss Percent", group = "Setting Stop Loss Level")
+
+x = (100 - StopLoss) / 100
+
+StopLossLevel = LowerLimit * x
+
+GridDestroyed = close < StopLossLevel and barstate.isconfirmed
+
+if ExitConditionOn
+    strategy.close_all(when = GridDestroyed, comment = "GridDestroyed")
+
+//--------------------------------------------------------------------------------}
+
+
+//--------------------------------------- Data Table Setting --------------------------------------{
+
+i_position = input.string(defval = "Bottom Right", title = "Table Placement", options = ["Top Right", "Middle Right", "Bottom Right"], group = "Table Characteristics")
+
+position = i_position == "Top Right" ? position.top_right : i_position == "Middle Right" ? position.middle_right : position.bottom_right
+
+i_w = input.int(title = "Width", defval = 14, group = "Table Characteristics")
+i_h = input.int(title = "Height", defval = 9, group = "Table Characteristics")
+i_text_size = input(title = "Text Size", defval = "Normal")
+
+text_size = i_text_size == "Normal" ? size.normal : i_text_size == "Auto" ? size.auto : i_text_size == "Auto" ? size.auto : i_text_size == "Tiny" ? size.tiny
+  : i_text_size == "Small" ? size.small : i_text_size == "Large" ? size.large : size.huge
+
+i   = input.bool(title = "Take Profit Level", defval = true, group = "Enable Rows")
+i_1 = input.bool(title = "Row 1", defval = true, group = "Enable Rows")
+i_2 = input.bool(title = "Row 2", defval = true, group = "Enable Rows")
+i_3 = input.bool(title = "Row 3", defval = true, group = "Enable Rows")
+i_4 = input.bool(title = "Row 4", defval = true, group = "Enable Rows")
+y   = input.bool(title = "Mid Price Grid", defval = true, group = "Enable Rows")
+i_5 = input.bool(title = "Row 5", defval = true, group = "Enable Rows")
+i_6 = input.bool(title = "Row 6", defval = true, group = "Enable Rows")
+i_7 = input.bool(title = "Row 7", defval = true, group = "Enable Rows")
+i_8 = input.bool(title = "Row 8", defval = true, group = "Enable Rows")
+i_9 = input.bool(title = "Stop Loss Level", defval = true, group = "Enable Rows")
+
+var table perfTable = table.new(position, 2, 11, frame_color = color.blue, frame_width = 2, border_width = 1)
+
+if i
+    table.cell(perfTable, 0, 0, "EXTREME GRID", bgcolor = color.new(color.purple, 74), text_color = color.new(color.white, 0), width = i_w, height = i_h, text_size = text_size)
+if i
+    table.cell(perfTable, 1, 0, text = str.tostring(UpperLimit), bgcolor = color.new(color.purple, 74), text_color = color.new(color.white, 0), width = i_w, height = i_h, text_size = text_size)
+
+if i_1
+    table.cell(perfTable, 0, 1,  "GRID PRICE 1", bgcolor = color.new(color.blue, 74),  text_color = color.new(color.white, 0), width = i_w, height = i_h, text_size = text_size)
+if i_2
+    table.cell(perfTable, 0, 2, "GRID PRICE 2", bgcolor = color.new(color.blue, 74), text_color = color.new(color.white, 0), width = i_w, height = i_h, text_size = text_size)
+if i_3
+    table.cell(perfTable, 0, 3, "GRID PRICE 3", bgcolor = color.new(color.blue, 74), text_color = color.new(color.white, 0), width = i_w, height = i_h, text_size = text_size)
+if i_4
+    table.cell(perfTable, 0, 4, "GRID PRICE 4", bgcolor = color.new(color.blue, 74), text_color = color.new(color.white, 0), width = i_w, height = i_h, text_size = text_size)
+
+if i_1
+    table.cell(perfTable, 1, 1, text = str.tostring(Linea_A), bgcolor = color.new(color.blue, 74),  text_color = color.new(color.white, 0), width = i_w, height = i_h, text_size = text_size)
+if i_2
+    table.cell(perfTable, 1, 2, text = str.tostring(Linea_B), bgcolor = color.new(color.blue, 74), text_color = color.new(color.white, 0), width = i_w, height = i_h, text_size = text_size)
+if i_3
+    table.cell(perfTable, 1, 3, text = str.tostring(Linea_C), bgcolor = color.new(color.blue, 74), text_color = color.new(color.white, 0), width = i_w, height = i_h, text_size = text_size)
+if i_4
+    table.cell(perfTable, 1, 4, text = str.tostring(Linea_D), bgcolor = color.new(color.blue, 74), text_color = color.new(color.white, 0), width = i_w, height = i_h, text_size = text_size)
+
+if y
+    table.cell(perfTable, 0, 5, "MID PRICE GRID", bgcolor = color.new(color.purple, 74), text_color = color.new(color.white, 0), width = i_w, height = i_h, text_size = text_size)
+if y
+    table.cell(perfTable, 1, 5, text = str.tostring(Linea_50Percent), bgcolor = color.new(color.purple, 74), text_color = color.new(color.white, 0), width = i_w, height = i_h, text_size = text_size)
+
+
+if i_5
+    table.cell(perfTable, 0, 6,  "GRID PRICE 5", bgcolor = color.new(color.blue, 74),  text_color = color.new(color.white, 0), width = i_w, height = i_h, text_size = text_size)
+if i_6
+    table.cell(perfTable, 0, 7, "GRID PRICE 6", bgcolor = color.new(color.blue, 74), text_color = color.new(color.white, 0), width = i_w, height = i_h, text_size = text_size)
+if i_7
+    table.cell(perfTable, 0, 8, "GRID PRICE 7", bgcolor = color.new(color.blue, 74), text_color = color.new(color.white, 0), width = i_w, height = i_h, text_size = text_size)
+if i_8
+    table.cell(perfTable, 0, 9, "GRID PRICE 8", bgcolor = color.new(color.blue, 74), text_color = color.new(color.white, 0), width = i_w, height = i_h, text_size = text_size)
+
+if i_5
+    table.cell(perfTable, 1, 6,  text = str.tostring(Linea_E), bgcolor = color.new(color.blue, 74),  text_color = color.new(color.white, 0), width = i_w, height = i_h, text_size = text_size)
+if i_6
+    table.cell(perfTable, 1, 7, text = str.tostring(Linea_F), bgcolor = color.new(color.blue, 74), text_color = color.new(color.white, 0), width = i_w, height = i_h, text_size = text_size)
+if i_7
+    table.cell(perfTable, 1, 8, text = str.tostring(Linea_G), bgcolor = color.new(color.blue, 74), text_color = color.new(color.white, 0), width = i_w, height = i_h, text_size = text_size)
+if i_8
+    table.cell(perfTable, 1, 9, text = str.tostring(Linea_H), bgcolor = color.new(color.blue, 74), text_color = color.new(color.white, 0), width = i_w, height = i_h, text_size = text_size)
+
+if i_9
+    table.cell(perfTable, 0, 10, "STOP LOSS LEVEL", bgcolor = color.new(color.purple, 74), text_color = color.new(color.white, 0), width = i_w, height = i_h, text_size = text_size)
+
+if i_9
+    table.cell(perfTable, 1, 10, text = str.tostring(StopLossLevel), bgcolor = color.new(color.purple, 74), text_color = color.new(color.white, 0), width = i_w, height = i_h, text_size = text_size)
+
+//--------------------------------------------------------------------------------}
