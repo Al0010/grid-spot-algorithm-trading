@@ -32,4 +32,12 @@ Indispensable research and backtesting tool for those using bots for their inves
 3) Save 
 4) Run 
 
+# New Releases 5-11-2022
 
+1. Performance bug fix: the strategy had several output issues. The Trading View performance generator was offering an inappropriate calculation for this type of model. Therefore, we integrated a table showing the performance of the strategy correctly.
+
+2. Improved User Interface: we boost the code and created a better user experience. Descriptions and confirmation tabs have been added. Many users experienced difficulty in setting up on the algorithm chart. This update has eliminated this issue definitely.
+
+3. Grid improvement: the design of the grid has been improved, creating a refined design tool. The old grid has been replaced with a new one that has a lighter and more intuitive design.
+
+4. Update of functions that will be deprecated: functions that will be deprecated in future updates of Pine Script have been removed. This will allow everyone to have a super tool that will run with any problem during next Pine Script updates.
