@@ -9,7 +9,7 @@ This is a long only strategy for spot assets.
 # HOW IT WORKS
 Grid trading is a trading strategy where an investor creates a so-called "price grid". The basic idea of the strategy is to repeatedly buy at the pre-specified price and then wait for the price to rise above that level and then sell the position (and vice versa with shorting or hedging).
 
-![Schermata 2022-04-21 alle 11 43 04](https://user-images.githubusercontent.com/100917872/164427772-c8f9baba-96b5-4f5c-b27c-35ce9c33944c.png)
+![Schermata 2022-09-05 alle 20 12 16](https://user-images.githubusercontent.com/100917872/188499241-48b30ff8-4b87-42f7-a4cc-aee1bbe30ebd.png)
 
 # FEATURES
 1) Grids: This algorithm has a total of 10 grids.
