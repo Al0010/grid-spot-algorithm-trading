@@ -1,0 +1,181 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © thequantscience
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+//@version=6
+strategy(
+     title = 'Grid Spot Trading Algorithm V2 [The Quant Science]', 
+     overlay = true,
+     calc_on_every_tick = true,
+     initial_capital = 10000, 
+     commission_type = strategy.commission.percent, 
+     commission_value = 0.10, 
+     pyramiding = 5,
+     default_qty_type = strategy.percent_of_equity,
+     close_entries_rule = 'ANY'
+     )
+
+high_price  = input.price(defval = 0.00, title = 'High price: ', group = "TOP PRICE GRID", confirm = true, tooltip = "Top grid price.")
+close_price = input.price(defval = 0.00, title = 'Low price: ',  group = "BOTTOM PRICE GRID", confirm = true, tooltip = "Bottom grid price.")
+
+grid_destroyer = input.bool(defval = false,title = 'Active grid destroyer:',group = "STOP LOSS CONFIGURATION", inline = "SL", tooltip = "Destroy the grid when price crossunder the stop loss level.", confirm = false)
+stop_level     = input.price(defval = 0.00, title = '',group = "STOP LOSS CONFIGURATION", inline = "SL", confirm = false, tooltip = "Stop loss price level. Set price level to destroy the grid and close all the positions.")
+
+grid_range = high_price - close_price
+
+var float grid_1  = 0
+var float grid_2  = 0
+var float grid_3  = 0
+var float grid_4  = 0
+var float grid_5  = 0
+var float grid_6  = 0
+var float grid_7  = 0
+var float grid_8  = 0
+var float grid_9  = 0
+var float grid_10 = 0
+
+var float grid_factor = 0 
+
+if (high_price > 0 or close_price > 0)
+
+    grid_factor := grid_range / 9
+
+    grid_1 := (high_price)
+
+    grid_2 := (high_price - (grid_factor * 1)) 
+    grid_3 := (high_price - (grid_factor * 2)) 
+    grid_4 := (high_price - (grid_factor * 3)) 
+    grid_5 := (high_price - (grid_factor * 4))
+
+    grid_6  := (high_price - (grid_factor * 5)) 
+    grid_7  := (high_price - (grid_factor * 6)) 
+    grid_8  := (high_price - (grid_factor * 7)) 
+    grid_9  := (high_price - (grid_factor * 8))
+
+    grid_10 := (close_price)
+    
+var float lots = 0
+var float account_balance = 0 
+
+long = (ta.cross(close, grid_5))
+
+if (close < high_price or close > close_price)
+
+    if strategy.opentrades==0
+
+        account_balance := strategy.equity
+        lots := (account_balance / close) / 5
+        strategy.entry(id = "O #1", direction = strategy.long, qty = lots, limit = grid_6)
+        strategy.entry(id = "O #2", direction = strategy.long, qty = lots, limit = grid_7)
+        strategy.entry(id = "O #3", direction = strategy.long, qty = lots, limit = grid_8)
+        strategy.entry(id = "O #4", direction = strategy.long, qty = lots, limit = grid_9)
+        strategy.entry(id = "O #5", direction = strategy.long, qty = lots, limit = grid_10)
+        
+        if (close < grid_6)
+            strategy.cancel(id = "O #1")
+        if (close < grid_7)
+            strategy.cancel(id = "O #2")
+        if (close < grid_8)
+            strategy.cancel(id = "O #3")
+        if (close < grid_9)
+            strategy.cancel(id = "O #4")
+        if (close < grid_10)
+            strategy.cancel(id = "O #5")
+
+Exit(type) => 
+    
+    switch type
+
+        "Grid level 5" => grid_1
+        "Grid level 4" => grid_2
+        "Grid level 3" => grid_3
+        "Grid level 2" => grid_4
+        "Grid level 1" => grid_5
+
+exit_input = input.string("Grid level 1", title = "Select exit", options = ["Grid level 1", "Grid level 2", "Grid level 3", "Grid level 4", "Grid level 5"], tooltip = "Starting from the middle to the top.", group = "Exit Configuration")
+exit_price = Exit(exit_input)
+
+if ta.crossover(close, exit_price)
+
+    strategy.close_all("Close-Position")
+
+    strategy.cancel("O #1")
+    strategy.cancel("O #2")
+    strategy.cancel("O #3")
+    strategy.cancel("O #4")
+    strategy.cancel("O #5")
+
+if (high_price > 0 or close_price > 0) and grid_destroyer==true 
+    if ta.crossunder(close, stop_level)
+        strategy.close_all("Grid Destroyed") 
+
+var float new_ten_grid_1  = 0 
+var float new_ten_grid_2  = 0 
+var float new_ten_grid_3  = 0 
+var float new_ten_grid_4  = 0 
+var float new_ten_grid_5  = 0 
+var float new_ten_grid_6  = 0 
+var float new_ten_grid_7  = 0 
+var float new_ten_grid_8  = 0 
+var float new_ten_grid_9  = 0 
+var float new_ten_grid_10 = 0 
+
+var float grid_destroyed_ten = 0 
+
+if (high_price > 0 or close_price > 0)
+
+    new_ten_grid_1  := grid_1
+    new_ten_grid_2  := grid_2
+    new_ten_grid_3  := grid_3
+    new_ten_grid_4  := grid_4
+    new_ten_grid_5  := grid_5
+    new_ten_grid_6  := grid_6
+    new_ten_grid_7  := grid_7
+    new_ten_grid_8  := grid_8
+    new_ten_grid_9  := grid_9
+    new_ten_grid_10 := grid_10
+
+    if grid_destroyer == true 
+        grid_destroyed_ten := stop_level
+
+else 
+
+    new_ten_grid_1  := na
+    new_ten_grid_2  := na
+    new_ten_grid_3  := na
+    new_ten_grid_4  := na
+    new_ten_grid_5  := na
+    new_ten_grid_6  := na
+    new_ten_grid_7  := na
+    new_ten_grid_8  := na
+    new_ten_grid_9  := na
+    new_ten_grid_10 := na
+
+    if grid_destroyer == false 
+        grid_destroyed_ten := na
+
+color GREEN_BASE = #35f83b
+color RED_BASE   = #fc3636
+
+p1  = plot(new_ten_grid_1,  "Grid Line 1",  color = color.new(GREEN_BASE, 90))
+p2  = plot(new_ten_grid_2,  "Grid Line 2",  color = color.new(GREEN_BASE, 90))
+p3  = plot(new_ten_grid_3,  "Grid Line 3",  color = color.new(GREEN_BASE, 85))
+p4  = plot(new_ten_grid_4,  "Grid Line 4",  color = color.new(GREEN_BASE, 80))
+p5  = plot(new_ten_grid_5,  "Grid Line 5",  color = color.new(GREEN_BASE, 70))
+p6  = plot(new_ten_grid_6,  "Grid Line 6",  color = color.new(GREEN_BASE, 60))
+p7  = plot(new_ten_grid_7,  "Grid Line 7",  color = color.new(RED_BASE, 60))
+p8  = plot(new_ten_grid_8,  "Grid Line 8",  color = color.new(RED_BASE, 70))
+p9  = plot(new_ten_grid_9,  "Grid Line 9",  color = color.new(RED_BASE, 80))
+p10 = plot(new_ten_grid_10, "Grid Line 10", color = color.new(RED_BASE, 85))
+
+plot(grid_destroyed_ten, "Grid Destroyed", color = color.new(RED_BASE, 80), linewidth = 10)
+
+fill(p1, p2, color = color.new(GREEN_BASE, 90), title = "Fill Zone 1-2")
+fill(p2, p3, color = color.new(GREEN_BASE, 85), title = "Fill Zone 2-3")
+fill(p3, p4, color = color.new(GREEN_BASE, 80), title = "Fill Zone 3-4")
+fill(p4, p5, color = color.new(GREEN_BASE, 70), title = "Fill Zone 4-5")
+fill(p5, p6, color = color.new(GREEN_BASE, 60), title = "Fill Zone 5-6")
+
+fill(p6, p7, color = color.new(RED_BASE, 60), title = "Fill Zone 6-7")
+fill(p7, p8, color = color.new(RED_BASE, 70), title = "Fill Zone 7-8")
+fill(p8, p9, color = color.new(RED_BASE, 80), title = "Fill Zone 8-9")
+fill(p9, p10, color = color.new(RED_BASE, 85), title = "Fill Zone 9-10")
