@@ -1,4 +1,5 @@
 # Sept. 2026
+![Uploading BTCUSDT_2026-09-16_15-44-46.png…]()
 
 I have updated this repository with the latest version of the grid model I published on my TradingView profile.
 This new version includes all the optimizations driven by my community on TradingView over the past 3 years.
